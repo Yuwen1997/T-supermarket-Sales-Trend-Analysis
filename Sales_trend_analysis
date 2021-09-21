@@ -1,0 +1,76 @@
+import warnings
+warnings.filterwarnings('ignore')
+
+import pandas as pd
+
+meat_df = pd.read_excel("/Users/mini/Desktop/Complete Dissertation/data analysis/python/Meat Promotions Dataset.xls", sheet_name="Dataset")
+meat_df.head()
+
+import numpy as np
+np.unique(meat_df["Lifestage"])
+
+np.unique(meat_df["ID"])
+np.unique(meat_df["Region"])
+
+meat_df.columns
+
+# which product have maximum sale and minimum sale
+beef = ["B1_SALES","B2_SALES","B3_SALES","B4_SALES","B5_SALES","B6_SALES","B7_SALES","B8_SALES","B9_SALES","B10_SALES",
+       "B11_SALES","B12_SALES","B13_SALES","B14_SALES","B15_SALES","B16_SALES","B17_SALES","B18_SALES","B19_SALES","B20_SALES"]
+
+lamb = ["L1_SALES","L2_SALES","L3_SALES","L4_SALES","L5_SALES","L6_SALES","L7_SALES","L8_SALES","L9_SALES","L10_SALES",
+       "L11_SALES","L12_SALES","L13_SALES"]
+
+pork = ["P1_SALES","P2_SALES","P3_SALES","P4_SALES","P5_SALES","P6_SALES","P7_SALES","P8_SALES","P9_SALES","P10_SALES",
+       "P11_SALES","P12_SALES"]
+
+
+beef_sum = 0
+for field in beef:
+    beef_sum += sum(meat_df[field])
+    
+lamb_sum = 0
+for field in lamb:
+    lamb_sum += sum(meat_df[field])
+    
+pork_sum = 0
+for field in pork:
+    pork_sum += sum(meat_df[field])
+    
+print("beef: ",beef_sum)
+print("lamb: ",lamb_sum)
+print("pork: ",pork_sum)
+
+# so beef > Pork > Lamb
+
+# which product is more buy in which region and under what lifestage
+meat_df.groupby(["Lifestage","Region"]).sum()
+
+# for B1 (Premium Roasting beef)- TPR only. No multi-buy exist
+B1_df = pd.DataFrame({"B1_Sales":meat_df["B1_SALES"],"TPR":meat_df["B1_TPR"], "Week":meat_df["Week"], "Date":meat_df["DATE"], "Lifestage":meat_df["Lifestage"], "Region":meat_df["Region"]}) 
+B1_df.head()
+
+# from 29 may,2006 to 14 jan, 2008
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.dates as mdates
+import seaborn as sns
+import matplotlib
+%matplotlib notebook
+%matplotlib inline
+
+formatter = matplotlib.dates.DateFormatter('%Y-%m-%d')
+
+for stage in np.unique(B1_df["Lifestage"]):
+    for region in np.unique(B1_df["Region"].values):
+        df = B1_df.loc[(B1_df.Lifestage==stage) & (B1_df.Region==region)].copy()
+        sns.set(font_scale=1.5, style="whitegrid")
+        fig, ax1 = plt.subplots(figsize=(30,15))
+        ax1.set_title("For Lifestage = {} and Region = {}".format(stage, region))
+        sns.lineplot(x="Date", y="B1_Sales", data=df, ax=ax1) # plot normal time series plot
+        sns.scatterplot(x="Date", y="B1_Sales", data=df.loc[df.TPR == 1], color='red', ax=ax1)
+        ax1.xaxis.set_major_formatter(formatter)
+        plt.setp(ax1.get_xticklabels(), rotation = 90)
+        
+# total sales of B1 product through each lifestage in each region
+B1_df.groupby(["Lifestage","Region"]).sum().sort_values("B1_Sales", ascending=False)
