@@ -62,15 +62,15 @@ import matplotlib
 formatter = matplotlib.dates.DateFormatter('%Y-%m-%d')
 
 for stage in np.unique(B1_df["Lifestage"]):
-    for region in np.unique(B1_df["Region"].values):
-        df = B1_df.loc[(B1_df.Lifestage==stage) & (B1_df.Region==region)].copy()
-        sns.set(font_scale=1.5, style="whitegrid")
-        fig, ax1 = plt.subplots(figsize=(30,15))
-        ax1.set_title("For Lifestage = {} and Region = {}".format(stage, region))
-        sns.lineplot(x="Date", y="B1_Sales", data=df, ax=ax1) # plot normal time series plot
-        sns.scatterplot(x="Date", y="B1_Sales", data=df.loc[df.TPR == 1], color='red', ax=ax1)
-        ax1.xaxis.set_major_formatter(formatter)
-        plt.setp(ax1.get_xticklabels(), rotation = 90)
+for region in np.unique(B1_df["Region"].values):
+df = B1_df.loc[(B1_df.Lifestage==stage) & (B1_df.Region==region)].copy()
+sns.set(font_scale=1.5, style="whitegrid")
+fig, ax1 = plt.subplots(figsize=(30,15))
+ax1.set_title("For Lifestage = {} and Region = {}".format(stage, region))
+sns.lineplot(x="Date", y="B1_Sales", data=df, ax=ax1) # plot normal time series plot
+sns.scatterplot(x="Date", y="B1_Sales", data=df.loc[df.TPR == 1], color='red', ax=ax1)
+ax1.xaxis.set_major_formatter(formatter)
+plt.setp(ax1.get_xticklabels(), rotation = 90)
         
 # total sales of B1 product through each lifestage in each region
 B1_df.groupby(["Lifestage","Region"]).sum().sort_values("B1_Sales", ascending=False)
@@ -175,7 +175,7 @@ B13_df["Norm_B13_Sales"] = [val/sum(B13_df["B13_Sales"]) for val in B13_df["B13_
 formatter = matplotlib.dates.DateFormatter('%Y-%m-%d')
 
 for stage in np.unique(B1_df["Lifestage"]):
-    for region in np.unique(B1_df["Region"].values):
+for region in np.unique(B1_df["Region"].values):
         df1 = B12_df.loc[(B12_df.Lifestage==stage) & (B12_df.Region==region)].copy()
         df2 = B13_df.loc[(B13_df.Lifestage==stage) & (B13_df.Region==region)].copy()
         sns.set(font_scale=1.5, style="whitegrid")
